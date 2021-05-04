@@ -3,6 +3,7 @@ project_name: authenticator
 
 builds:
   - binary: aws-iam-authenticator
+    id: aws-iam-authenticator
     main: ./cmd/aws-iam-authenticator/
     goos:
       - linux
@@ -15,11 +16,43 @@ builds:
       - "-s -w -X pkg.Version={{.Version}} -X pkg.CommitID={{.Commit}} -buildid=''"
 
 dockers:
-  - binaries:
+  - ids:
      - aws-iam-authenticator
     dockerfile: Dockerfile.scratch
+    goarch: arm64
+    use_buildx: true
     image_templates:
-     - "ghcr.io/kronostechnologies/aws-iam-authenticator:{{ .Tag }}"
+     - "ghcr.io/kronostechnologies/aws-iam-authenticator:{{ .Tag }}-arm64"
+    build_flag_templates:
+     - --platform=linux/arm64
+     - --label=org.opencontainers.image.title={{ .ProjectName }}
+     - --label=org.opencontainers.image.description={{ .ProjectName }}
+     - --label=org.opencontainers.image.url=https://github.com/kronostechnologies/aws-iam-authenticator
+     - --label=org.opencontainers.image.source=https://github.com/kronostechnologies/aws-iam-authenticator
+     - --label=org.opencontainers.image.version={{ .Version }}
+     - --label=org.opencontainers.image.revision={{ .FullCommit }}
+  - ids:
+     - aws-iam-authenticator
+    dockerfile: Dockerfile.scratch
+    use_buildx: true
+    image_templates:
+     - "ghcr.io/kronostechnologies/aws-iam-authenticator:{{ .Tag }}-amd64"
+    build_flag_templates:
+     - --platform=linux/amd64
+     - --label=org.opencontainers.image.title={{ .ProjectName }}
+     - --label=org.opencontainers.image.description={{ .ProjectName }}
+     - --label=org.opencontainers.image.url=https://github.com/kronostechnologies/aws-iam-authenticator
+     - --label=org.opencontainers.image.source=https://github.com/kronostechnologies/aws-iam-authenticator
+     - --label=org.opencontainers.image.version={{ .Version }}
+     - --label=org.opencontainers.image.revision={{ .FullCommit }}
+
+
+docker_manifests:
+  - name_template: "ghcr.io/kronostechnologies/aws-iam-authenticator:{{ .Tag }}"
+    image_templates:
+     - "ghcr.io/kronostechnologies/aws-iam-authenticator:{{ .Tag }}-amd64"
+     - "ghcr.io/kronostechnologies/aws-iam-authenticator:{{ .Tag }}-arm64v8"
+
 
 snapshot:
   name_template: "git-{{.ShortCommit}}"
