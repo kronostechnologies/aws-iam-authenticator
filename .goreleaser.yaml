@@ -2,11 +2,13 @@
 project_name: authenticator
 
 builds:
-  - binary: aws-iam-authenticator
-    id: aws-iam-authenticator
+  - id: aws-iam-authenticator
+    binary: aws-iam-authenticator
     main: ./cmd/aws-iam-authenticator/
     goos:
+      - darwin
       - linux
+      - windows
     goarch:
       - amd64
       - arm64
